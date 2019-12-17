@@ -17,12 +17,12 @@ from learner import Learner
           
 def train():
     
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
     
     # Set random seeds for reproducability
     np.random.seed(train_params.RANDOM_SEED)
     random.seed(train_params.RANDOM_SEED)
-    tf.set_random_seed(train_params.RANDOM_SEED)
+    tf.compat.v1.set_random_seed(train_params.RANDOM_SEED)
     
     # Initialise prioritised experience replay memory
     PER_memory = PrioritizedReplayBuffer(train_params.REPLAY_MEM_SIZE, train_params.PRIORITY_ALPHA)
@@ -30,9 +30,9 @@ def train():
     gaussian_noise = GaussianNoiseGenerator(train_params.ACTION_DIMS, train_params.ACTION_BOUND_LOW, train_params.ACTION_BOUND_HIGH, train_params.NOISE_SCALE)
             
     # Create session
-    config = tf.ConfigProto(allow_soft_placement=True)
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
     config.gpu_options.allow_growth = True
-    sess = tf.Session(config=config)  
+    sess = tf.compat.v1.Session(config=config)  
     
     # Create threads for learner process and agent processes       
     threads = []

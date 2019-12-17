@@ -40,7 +40,7 @@ class Agent:
               
     def build_network(self, training):
         # Input placeholder    
-        self.state_ph = tf.placeholder(tf.float32, ((None,) + train_params.STATE_DIMS)) 
+        self.state_ph = tf.compat.v1.placeholder(tf.float32, ((None,) + train_params.STATE_DIMS)) 
         
         if training:
             # each agent has their own var_scope
@@ -72,15 +72,15 @@ class Agent:
         # Create summary writer to write summaries to disk
         if not os.path.exists(logdir):
             os.makedirs(logdir)
-        self.summary_writer = tf.summary.FileWriter(logdir, self.sess.graph)
+        self.summary_writer = tf.compat.v1.summary.FileWriter(logdir, self.sess.graph)
         
         # Create summary op to save episode reward to Tensorboard log
         self.ep_reward_var = tf.Variable(0.0, trainable=False, name=('ep_reward_agent_%02d'%self.n_agent))
-        tf.summary.scalar("Episode Reward", self.ep_reward_var)
-        self.summary_op = tf.summary.merge_all()
+        tf.compat.v1.summary.scalar("Episode Reward", self.ep_reward_var)
+        self.summary_op = tf.compat.v1.summary.merge_all()
         
         # Initialise reward var - this will not be initialised with the other network variables as these are copied over from the learner
-        self.init_reward_var = tf.variables_initializer([self.ep_reward_var])
+        self.init_reward_var = tf.compat.v1.variables_initializer([self.ep_reward_var])
             
     def run(self, PER_memory, gaussian_noise, run_agent_event, stop_agent_event):
         # Continuously run agent in environment to collect experiences and add to replay memory

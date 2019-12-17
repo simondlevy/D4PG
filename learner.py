@@ -24,12 +24,12 @@ class Learner:
     def build_network(self):
         
         # Define input placeholders    
-        self.state_ph = tf.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.STATE_DIMS))
-        self.action_ph = tf.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.ACTION_DIMS))
-        self.target_atoms_ph = tf.placeholder(tf.float32, (train_params.BATCH_SIZE, train_params.NUM_ATOMS)) # Atom values of target network with Bellman update applied
-        self.target_Z_ph = tf.placeholder(tf.float32, (train_params.BATCH_SIZE, train_params.NUM_ATOMS))  # Future Z-distribution - for critic training
-        self.action_grads_ph = tf.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.ACTION_DIMS)) # Gradient of critic's value output wrt action input - for actor training
-        self.weights_ph = tf.placeholder(tf.float32, (train_params.BATCH_SIZE)) # Batch of IS weights to weigh gradient updates based on sample priorities
+        self.state_ph = tf.compat.v1.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.STATE_DIMS))
+        self.action_ph = tf.compat.v1.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.ACTION_DIMS))
+        self.target_atoms_ph = tf.compat.v1.placeholder(tf.float32, (train_params.BATCH_SIZE, train_params.NUM_ATOMS)) # Atom values of target network with Bellman update applied
+        self.target_Z_ph = tf.compat.v1.placeholder(tf.float32, (train_params.BATCH_SIZE, train_params.NUM_ATOMS))  # Future Z-distribution - for critic training
+        self.action_grads_ph = tf.compat.v1.placeholder(tf.float32, ((train_params.BATCH_SIZE,) + train_params.ACTION_DIMS)) # Gradient of critic's value output wrt action input - for actor training
+        self.weights_ph = tf.compat.v1.placeholder(tf.float32, (train_params.BATCH_SIZE)) # Batch of IS weights to weigh gradient updates based on sample priorities
 
         # Create value (critic) network + target network
         if train_params.USE_BATCH_NORM:
@@ -56,8 +56,8 @@ class Learner:
         self.checkpoint_path = os.path.join(train_params.CKPT_DIR, model_name)        
         if not os.path.exists(train_params.CKPT_DIR):
             os.makedirs(train_params.CKPT_DIR)
-        saver_vars = [v for v in tf.global_variables() if 'learner' in v.name]
-        self.saver = tf.train.Saver(var_list = saver_vars, max_to_keep=201) 
+        saver_vars = [v for v in tf.compat.v1.global_variables() if 'learner' in v.name]
+        self.saver = tf.compat.v1.train.Saver(var_list = saver_vars, max_to_keep=201) 
         
     def build_update_ops(self):     
         network_params = self.actor_net.network_params + self.critic_net.network_params
@@ -87,7 +87,7 @@ class Learner:
             self.saver.restore(self.sess, ckpt)
         else:
             self.start_step = 0
-            self.sess.run(tf.global_variables_initializer())   
+            self.sess.run(tf.compat.v1.global_variables_initializer())   
             # Perform hard copy (tau=1.0) of initial params to target networks
             self.sess.run(self.init_update_op)
             
