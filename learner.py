@@ -8,6 +8,7 @@ import os
 import sys
 import tensorflow as tf
 import numpy as np
+from time import time
 
 from params import train_params
 from utils.network import Actor, Actor_BN, Critic, Critic_BN
@@ -106,7 +107,9 @@ class Learner:
         # Training
         sys.stdout.write('\n\nTraining...\n')   
         sys.stdout.flush()
-    
+
+        start = time()
+  
         for train_step in range(self.start_step+1, train_params.NUM_STEPS_TRAIN+1):  
             # Get minibatch
             minibatch = self.PER_memory.sample(train_params.BATCH_SIZE, priority_beta) 
@@ -160,7 +163,11 @@ class Learner:
                     # Allow agent to continue adding experiences to replay memory
                     self.run_agent_event.set()
                     
-            sys.stdout.write('\rStep {:d}/{:d}'.format(train_step, train_params.NUM_STEPS_TRAIN))
+            elapsed = time() - start
+            rate = train_step / elapsed
+            max_steps = train_params.NUM_STEPS_TRAIN
+            hours = (max_steps-train_step) / rate / 3600
+            sys.stdout.write('\rStep {:d}/{:d} ({:d}/sec; {:3.2f} hours left)'.format(train_step, max_steps, int(rate), hours))
             sys.stdout.flush()  
             
             # Save ckpt periodically
