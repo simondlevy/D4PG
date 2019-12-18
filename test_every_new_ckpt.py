@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 ## Test Every New Ckpt ##
 # This allows testing to be run alongside training by running 'run_every_new_ckpt.sh', which monitors the ckpt directory and runs test.py every time a new ckpt is added.

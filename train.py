@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 ## Train ##
 # Code to train D4PG Network on OpenAI Gym environments
